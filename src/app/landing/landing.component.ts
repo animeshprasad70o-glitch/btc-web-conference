@@ -1,11 +1,13 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
@@ -37,7 +39,48 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   constructor(private router: Router) {}
+contactForm = {
+  fullName: '',
+  email: '',
+  message: ''
+};
 
+isSubmitting = false;
+submitSuccess = '';
+submitError = '';
+
+async onSubmit(form: any): Promise<void> {
+  this.submitSuccess = '';
+  this.submitError = '';
+
+  if (form.invalid) {
+    form.control.markAllAsTouched();
+    return;
+  }
+
+  this.isSubmitting = true;
+
+  try {
+    console.log('Contact Form Details:', this.contactForm);
+
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    this.submitSuccess = 'Message sent successfully!';
+
+    form.resetForm();
+
+    this.contactForm = {
+      fullName: '',
+      email: '',
+      message: ''
+    };
+
+  } catch (error) {
+    this.submitError = 'Failed to send message. Please try again.';
+  } finally {
+    this.isSubmitting = false;
+  }
+}
   ngOnInit(): void {
     this.startTypingAnimation();
   }
